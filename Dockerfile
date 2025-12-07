@@ -1,17 +1,32 @@
-FROM eclipse-temurin:17-jdk-jammy
+# ===============================
+# 1. Build Stage (Maven + JDK)
+# ===============================
+FROM eclipse-temurin:17-jdk AS build
 
 WORKDIR /app
 
-# Copy all project files
+# Copy entire project
 COPY . .
 
-# Make mvnw executable
+# Give permission to mvnw (important)
 RUN chmod +x mvnw
-RUN chmod +x mvnw.cmd,
 
-# Build the project
+# Build the project without tests
 RUN ./mvnw clean package -DskipTests
 
+
+# ===============================
+# 2. Run Stage (Lightweight JRE)
+# ===============================
+FROM eclipse-temurin:17-jre
+
+WORKDIR /app
+
+# Copy only JAR from build stage
+COPY --from=build /app/target/*.jar app.jar
+
+# Expose port
 EXPOSE 8080
 
-CMD ["java", "-jar", "target/kishanBackend-0.0.1-SNAPSHOT.jar"]
+# Run the application
+ENTRYPOINT ["java", "-jar","app.jar"]
