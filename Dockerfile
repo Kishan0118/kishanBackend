@@ -1,17 +1,17 @@
 # Base image
-FROM openjdk:17-jdk-alpine
+FROM eclipse-temurin:17-jdk-jammy
 
 # Set working directory
 WORKDIR /app
 
-# Copy project files
+# Copy all project files
 COPY . .
 
 # Build the project
 RUN ./mvnw clean package -DskipTests
 
-# Expose the port
+# Expose port
 EXPOSE 8080
 
-# Run the jar file
+# Start the backend
 CMD ["java", "-jar", "target/kishanBackend-0.0.1-SNAPSHOT.jar"]
