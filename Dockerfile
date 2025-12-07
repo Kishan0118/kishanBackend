@@ -7,6 +7,9 @@ WORKDIR /app
 # Copy all project files
 COPY . .
 
+#make mvnw executable
+RUN chmod +x mvnw
+RUN chmod +x mvnw.`command`
 # Build the project
 RUN ./mvnw clean package -DskipTests
 
